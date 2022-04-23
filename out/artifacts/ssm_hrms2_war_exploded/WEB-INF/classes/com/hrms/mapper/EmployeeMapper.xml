@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrms.mapper.EmployeeMapper">
+
+    <resultMap id="employee" type="com.hrms.bean.Employee">
+        <result column="emp_id" property="empId"></result>
+        <result column="emp_name" property="empName"></result>
+        <result column="emp_email" property="empEmail"></result>
+        <result column="gender" property="gender"></result>
+        <result column="department_id" property="departmentId"></result>
+    </resultMap>
+
+    <resultMap id="withDeptResultMap" type="com.hrms.bean.Employee">
+        <result column="emp_id" property="empId"></result>
+        <result column="emp_name" property="empName"></result>
+        <result column="emp_email" property="empEmail"></result>
+        <result column="gender" property="gender"></result>
+        <result column="department_id" property="departmentId"></result>
+        <association column="department_id"  property="department" javaType="com.hrms.bean.Department">
+            <id column="dept_id" property="deptId"/>
+            <result column="dept_name" property="deptName"/>
+            <result column="dept_leader" property="deptLeader"/>
+        </association>
+    </resultMap>
+
+    <delete id="deleteOneById" parameterType="java.lang.Integer">
+        delete from tbl_emp where emp_id = #{empId}
+    </delete>
+
+    <update id="updateOneById" parameterType="com.hrms.bean.Employee" >
+        update tbl_emp set emp_name = #{employee.empName}, emp_email = #{employee.empEmail},  gender = #{employee.gender}, department_id = #{employee.departmentId}  where emp_id = #{empId}
+    </update>
+
+    <insert id="insertOne" parameterType="com.hrms.bean.Employee" >
+        insert into tbl_emp(emp_name, emp_email, gender, department_id) values(#{empName}, #{empEmail}, #{gender}, #{departmentId})
+    </insert>
+
+    <select id="selectOneById" parameterType="java.lang.Integer" resultType="com.hrms.bean.Employee" resultMap="employee">
+        select * from tbl_emp where emp_id = #{empId}
+    </select>
+
+    <select id="selectOneByName" parameterType="java.lang.String" resultType="com.hrms.bean.Employee" resultMap="employee">
+        select * from tbl_emp where emp_name = #{empName}
+    </select>
+
+    <!--查询带有部门信息的Employee-->
+    <select id="selectWithDeptById" parameterType="java.lang.Integer" resultType="com.hrms.bean.Employee" resultMap="withDeptResultMap">
+        select emp_id, emp_name, emp_email, gender, department_id, dept_id, dept_leader, dept_name from tbl_emp e, tbl_dept d where e.emp_id = #{empId} and e.department_id = d.dept_id
+    </select>
+
+    <select id="selectByLimitAndOffsert" parameterType="java.lang.Integer" resultType="com.hrms.bean.Employee" resultMap="withDeptResultMap">
+        select emp_id, emp_name, emp_email, gender, department_id, dept_id, dept_leader, dept_name  from tbl_emp e left join tbl_dept d on e.department_id = d.dept_id order by e.emp_id limit #{offset}, #{limit}
+    </select>
+
+    <select id="countEmps"  resultType="java.lang.Integer">
+        select count(emp_id) from tbl_emp
+    </select>
+
+</mapper>

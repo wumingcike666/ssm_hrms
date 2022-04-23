@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrms.mapper.DepartmentMapper">
+    <resultMap id="department" type="com.hrms.bean.Department">
+        <result column="dept_id" property="deptId"></result>
+        <result column="dept_name" property="deptName"></result>
+        <result column="dept_leader" property="deptLeader"></result>
+    </resultMap>
+
+    <insert id="insertDept" parameterType="com.hrms.bean.Department">
+        insert into tbl_dept(dept_name, dept_leader) values(#{department.deptName}, #{department.deptLeader})
+    </insert>
+
+    <delete id="deleteDeptById" parameterType="int">
+        delete  from tbl_dept where dept_id = #{deptId}
+    </delete>
+    
+    <update id="updateDeptById" parameterType="com.hrms.bean.Department">
+        update tbl_dept set dept_name=#{deptName}, dept_leader=#{deptLeader} where dept_id = #{deptId}
+    </update>
+
+    <select id="selectDeptList" resultType="com.hrms.bean.Department" resultMap="department">
+        select * from tbl_dept
+    </select>
+
+    <select id="selectOneById" resultType="com.hrms.bean.Department" resultMap="department">
+        select * from tbl_dept where dept_id = #{deptId}
+    </select>
+
+    <select id="selectOneByLeader" resultType="com.hrms.bean.Department" resultMap="department" parameterType="java.lang.String">
+        select * from tbl_dept where dept_leader = #{deptLeaderName}
+    </select>
+
+    <select id="selectOneByName" resultType="com.hrms.bean.Department" resultMap="department" parameterType="java.lang.String">
+        select * from tbl_dept where dept_name = #{deptName}
+    </select>
+
+    <select id="selectDeptsByLimitAndOffset" resultType="com.hrms.bean.Department" resultMap="department" parameterType="java.lang.Integer">
+        select * from tbl_dept limit #{arg0}, #{arg1}
+    </select>
+
+
+    <select id="checkDeptsExistsByNameAndleader" resultType="int" parameterType="java.lang.String">
+        select count(dept_id) from tbl_dept where dept_name = #{arg0} or dept_leader = #{arg1}
+    </select>
+
+    <select id="countDepts" resultType="int" parameterType="java.lang.String">
+        select count(*) from tbl_dept
+    </select>
+
+</mapper>
